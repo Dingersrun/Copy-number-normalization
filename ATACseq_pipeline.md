@@ -223,7 +223,7 @@ bedtools closest -a Merge.ATAC_D_K.20Meach_peaks.narrowPeak.bed -b BS_D_ref2K.50
 
 - prepare a metadata information for the samples 
 ```
-# an example metadata information table
+# An example metadata information table
 Sample_ID	condition	library
 BS_D1	BSFibroblasts	ATAC
 BS_D2	BSFibroblasts	ATAC
@@ -233,7 +233,6 @@ WT_K2	WTFibroblasts	ATAC
 WT_K3	WTFibroblasts	ATAC
 ```
 ```r
-#2023-June
 #usage: Rscript sampletable_path Htseqcount_with_header_path ComparisonName NameOfTreatedSample
 #remember to modify the ref level before running the script.
 
@@ -246,53 +245,55 @@ library(tidyverse)
 library(DESeq2)
 #read the input for R script
 args <- commandArgs(trailingOnly = TRUE)
-#sample info
-print(args[1]) 
-#count matrix
-print(args[2])
-#name for the plot
-print(args[3])
-#colnames for the DA peak list
-print(args[4])
-
-plotname <-args[3]
-print(plotname)
 
 #save the screen output into
+
 sink(paste0(plotname,"DESeq2.R.out"))
 
+#sample information table
+print(args[1])
 sampletable <- read.table(args[1],sep="\t",header =TRUE)
 sampletable$condition<-as.factor(sampletable$condition)
 
 message("sampletable")
 sampletable
-
+#count matrix
 message("genecount")
 genecount <- read.table(args[2], header=TRUE,sep="\t",row.names=1)
 head(genecount)
 summary(genecount)
 
+#name for the plot
+print(args[3])
+plotname <-args[3]
+print(plotname)
+
+#colnames for the output of differential signals
+print(args[4])
+
+#make the DESeq2 object
 dds<-DESeqDataSetFromMatrix(countData=genecount, colData=sampletable, design = ~condition)
 
 #define the reference level
 dds$condition <- relevel(dds$condition, ref = "WTFibroblasts")
 dds$condition
 
-#testing different cutoffs to remove peaks woth low readcount from all samples
+#testing different cutoffs to remove peaks with low read count from all samples
 summary(rowSums(counts(dds)) >= 18)
 summary(rowSums(counts(dds)) >= 30)
 summary(rowSums(counts(dds)) >= 36)
 summary(rowSums(counts(dds)) >= 40)
 
-#filtering the peaks with low read count, total number of reads from all samples less than 40
+#filtering the peaks with low read count, the total number of reads from all samples less than 40
 keep <- rowSums(counts(dds)) >= 40
 dds<-dds[keep,]
-#perform normalization (with the effective library size) and differnetial analysis
+#perform normalization (with the effective library size) and differential analysis
 message("DA analysis")
 dds<-DESeq(dds)
 
 #resultsNames(dds)
 
+#check the summary of the results
 head(results(dds, alpha=0.05))
 summary(results(dds, alpha=0.05))
 summary(results(dds, alpha=0.01))
