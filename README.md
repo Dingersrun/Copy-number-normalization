@@ -1,5 +1,5 @@
 ## Copy-number-aware pipeline for differential analysis of count-based data 
-can be applied to but not limited to ATAcseq, ChIPseq, Cut&Tag
+can be applied to but not limited to ATACseq, ChIPseq, Cut&Tag
 
 This is the example code for differential analysis incorporating the step of copy number normalization for ATACseq data and ChIPseq data in samples with different karyotype/copy numbers. users are free to choose alternative tools for the following steps.
 
