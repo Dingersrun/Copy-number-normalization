@@ -6,8 +6,8 @@
 if [ ! -e "/tmp/dsu" ];then mkdir /tmp/dsu;fi
 
 unset PYTHONPATH
-export LD_LIBRARY_PATH=/fml/chones/local/
-export PYTHONPATH=/fml/chones/local/lib/python3.8/site-packages:$PYTHONPATH
+export LD_LIBRARY_PATH=/Tool/
+export PYTHONPATH=/Tool/lib/python3.8/site-packages:$PYTHONPATH
 
 
 file=$1;
@@ -23,10 +23,10 @@ echo $dir
 #-m 20: keep reads longer than 20bp after trimming
 
 #Tn5 adaptors in the following command fro ATACseq data
-/fml/chones/local/bin/cutadapt --times 2 -a CTGTCTCTTATACACATCT -g AGATGTGTATAAGAGACAG -A CTGTCTCTTATACACATCT -G AGATGTGTATAAGAGACAG --cores=15 -O 10  --nextseq-trim=15 -m 20 --pair-filter any -o /tmp/dsu/"$fbname"_R1_001.cutadapt.fastq.filter.gz -p /tmp/dsu/"$fbname"_R2_001.cutadapt.fastq.filter.gz $dir/"$fbname"_R1_001.fastq.gz $dir/"$fbname"_R2_001.fastq.gz --too-short-output=/tmp/dsu/"$fbname"_R1_001.fastq.tooshort.gz --too-short-paired-output=/tmp/dsu/"$fbname"_R2_001.fastq.tooshort.gz 1> "$fbname".cutadapt.err 2> "$fbname".cutadapt.out
+/Tool/bin/cutadapt --times 2 -a CTGTCTCTTATACACATCT -g AGATGTGTATAAGAGACAG -A CTGTCTCTTATACACATCT -G AGATGTGTATAAGAGACAG --cores=15 -O 10  --nextseq-trim=15 -m 20 --pair-filter any -o /tmp/dsu/"$fbname"_R1_001.cutadapt.fastq.filter.gz -p /tmp/dsu/"$fbname"_R2_001.cutadapt.fastq.filter.gz $dir/"$fbname"_R1_001.fastq.gz $dir/"$fbname"_R2_001.fastq.gz --too-short-output=/tmp/dsu/"$fbname"_R1_001.fastq.tooshort.gz --too-short-paired-output=/tmp/dsu/"$fbname"_R2_001.fastq.tooshort.gz 1> "$fbname".cutadapt.err 2> "$fbname".cutadapt.out
 
 # Truseq adaptors in the following command for ChIPseq data
-/fml/chones/local/bin/cutadapt --times 2 -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC -g ACACTCTTTCCCTACACGACGCTCTTCCGATCT -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTG -G GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT --cores=8 -O 10 --nextseq-trim=15 -m 22 --pair-filter=any -o /tmp/dsu/"$fbname"_R1_001.cutadapt.fastq.filter.gz -p /tmp/dsu/"$fbname"_R2_001.cutadapt.fastq.filter.gz $dir/"$fbname"_R1_001.fastq.gz $dir/"$fbname"_R2_001.fastq.gz --too-short-output=$dir/"$fbname"_R1_001.fastq.small.gz --too-short-paired-output=$dir/"$fbname"_R2_001.fastq.small.gz
+/Tool/bin/cutadapt --times 2 -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC -g ACACTCTTTCCCTACACGACGCTCTTCCGATCT -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTG -G GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT --cores=8 -O 10 --nextseq-trim=15 -m 22 --pair-filter=any -o /tmp/dsu/"$fbname"_R1_001.cutadapt.fastq.filter.gz -p /tmp/dsu/"$fbname"_R2_001.cutadapt.fastq.filter.gz $dir/"$fbname"_R1_001.fastq.gz $dir/"$fbname"_R2_001.fastq.gz --too-short-output=$dir/"$fbname"_R1_001.fastq.small.gz --too-short-paired-output=$dir/"$fbname"_R2_001.fastq.small.gz
 
 echo "Cutadapt is finished"
 ```
@@ -34,12 +34,12 @@ echo "Cutadapt is finished"
 ## reads alignment and filtering
 ### align reads
 ```bash
-/fml/chones/local/bin/bwa mem -t 10 /fml/chones/genome/gbdb/hg38/hg38.fa \
+/Tool/bin/bwa mem -t 10 /fml/chones/genome/gbdb/hg38/hg38.fa \
 	/tmp/dsu/"$fbname"_R1_001.cutadapt.fastq.filter.gz /tmp/dsu/"$fbname"_R2_001.cutadapt.fastq.filter.gz \
 	-R "@RG\tID:$fbname\tSM:$fbname\tLB:ChIPseq\tPL:NovaseqS4.2x150" |\
-	/fml/chones/local/bin/samtools view -bh -@ 10 - > /tmp/dsu/$fbname.hg38.bam
+	/Tool/bin/samtools view -bh -@ 10 - > /tmp/dsu/$fbname.hg38.bam
 
-/fml/chones/local/bin/samtools sort -@ 10 -l 9 \
+/Tool/bin/samtools sort -@ 10 -l 9 \
 	-T /tmp/dsu/$fbname.tmpsort \
 	-o /tmp/dsu/$fbname.hg38.sorted.bam /tmp/dsu/$fbname.hg38.bam
 mv /tmp/dsu/"$fbname"_R?_001.cutadapt.fastq.filter.gz $dir/
@@ -66,7 +66,7 @@ if [ ! -e "/tmp/dsu" ]
                          then mkdir /tmp/dsu
 fi
 
-java -Xmx3g -XX:ParallelGCThreads=2 -Djava.io.tmpdir=/tmp/dsu -jar /fml/chones/local/picard-2.18.25/picard.jar MarkDuplicates \
+java -Xmx3g -XX:ParallelGCThreads=2 -Djava.io.tmpdir=/tmp/dsu -jar /Tool/picard-2.18.25/picard.jar MarkDuplicates \
 	I=$file \
 	O=/tmp/dsu/$fbname.pMarkdup.bam \
 	M=/tmp/dsu/$fbname.pMarkdup.metrics\
@@ -88,13 +88,13 @@ if [ ! -e "/tmp/dsu" ]
                          then mkdir /tmp/dsu
 fi
 
-/fml/chones/local/bin/samtools view -@ 3 -h -F 3588 -q 20 $file |grep -v "chrM"| grep -v "chr_Human_gammaherpesvirus_4"| \
-	/fml/chones/local/bin/samtools view -bh -@ 3 - >/tmp/dsu/$fbname.deDupMtq20.bam
-/fml/chones/local/bin/samtools index -@ 3 /tmp/dsu/$fbname.deDupMtq20.bam
+/Tool/bin/samtools view -@ 3 -h -F 3588 -q 20 $file |grep -v "chrM"| grep -v "chr_Human_gammaherpesvirus_4"| \
+	/Tool/bin/samtools view -bh -@ 3 - >/tmp/dsu/$fbname.deDupMtq20.bam
+/Tool/bin/samtools index -@ 3 /tmp/dsu/$fbname.deDupMtq20.bam
 
 #filter out reads in hg38 blacklist regions
-#there are 2 black list, one form UCSC: /fml/mickle/data/Dingwen/HiSeq3000/hg38.blacklist.bed
-#hg38 blacklist downloaded from Ensemble: #/fml/mickle/data/Dingwen/HiSeq3000/Coriell_G4ChIP/ENCODE_Grh38_ExclusionList_ENCFF356LFX.PositionMinus1.bed
+#there are 2 black list, one form UCSC: /mydata/HiSeq3000/hg38.blacklist.bed
+#hg38 blacklist downloaded from Ensemble: #/mydata/HiSeq3000/Coriell_G4ChIP/ENCODE_Grh38_ExclusionList_ENCFF356LFX.PositionMinus1.bed
 bedtools intersect -v -abam /tmp/dsu/$fbname.deDupMtq20.bam \
 	 -b ENCODE_Grh38_ExclusionList_ENCFF356LFX.PositionMinus1.bed -f 0.5 >\
 	 /tmp/dsu/$fbname.q20DeDupExcludableRegion.bam
@@ -124,7 +124,7 @@ samtools view -@ 5 -bh --subsample-seed 25 --subsample $frac $file > /tmp/dsu/"$
 sanmtools merge -c -p -f -@ 10 all_the_susampled.files > Sample.merge.bam
 
 # call peaks with macs2
-/fml/chones/local/bin/macs2 callpeak --tempdir /tmp/dsu/ -g hs \
+/Tool/bin/macs2 callpeak --tempdir /tmp/dsu/ -g hs \
         -t Sample.merge.bam \
         --outdir /tmp/dsu/ \
         -n "$fbname" \
@@ -174,10 +174,10 @@ if [ ! -e "/tmp/dsu" ]
                          then mkdir /tmp/dsu
 fi
 unset PYTHONPATH
-export LD_LIBRARY_PATH=/fml/chones/local/
-export PYTHONPATH=/fml/chones/local/lib/python3.8/site-packages:$PYTHONPATH
+export LD_LIBRARY_PATH=/Tool/
+export PYTHONPATH=/Tool/lib/python3.8/site-packages:$PYTHONPATH
 
-/fml/chones/local/bin/samtools view -@ 3 -h $bamfile | /fml/chones/local/bin/htseq-count -m union -t SO:0000684 -a 10 -s no -f sam -r pos -i ID --additional-attr Name --nonunique none - $peakfile > /tmp/dsu/"$fbname"__"$fbname2".HTseq.readcount 2>/tmp/dsu/"$fbname"__"$fbname2".HTseq.readcount.out
+/Tool/bin/samtools view -@ 3 -h $bamfile | /Tool/bin/htseq-count -m union -t SO:0000684 -a 10 -s no -f sam -r pos -i ID --additional-attr Name --nonunique none - $peakfile > /tmp/dsu/"$fbname"__"$fbname2".HTseq.readcount 2>/tmp/dsu/"$fbname"__"$fbname2".HTseq.readcount.out
 mv  /tmp/dsu/"$fbname"__"$fbname2".HTseq.readcount* $OutputDir
 ```
 
