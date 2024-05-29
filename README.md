@@ -20,4 +20,3 @@ This is the example code for differential analysis incorporating the step of cop
   Calling regional relative copy number ratio: `CNVkit`
   Assigning peaks to DNA segment: `bedtools`
 
-#### to cite the article:
