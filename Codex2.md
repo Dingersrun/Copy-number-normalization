@@ -8,7 +8,7 @@
 install.packages('devtools')
 devtools::install_github("yuchaojiang/CODEX2/package")
 library(CODEX2)
-
+library(tidyverse)
 library(BSgenome.Hsapiens.UCSC.hg38)
 genome = BSgenome.Hsapiens.UCSC.hg38
 
