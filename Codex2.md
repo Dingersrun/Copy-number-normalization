@@ -1,7 +1,7 @@
 #### Running Codex2 in R to detect copy number for each sample
 1, Codex2 does not support the mode of using samples as negative control if there is only 1 control/normal sample in `R`  
-2, Codex2 performs the best when one has matched tumor and normal/control samples in `bash`
-3, performing differential anlaysis 
+2, Codex2 performs the best when one has matched tumor and normal/control samples in `bash`  
+3, performing differential analysis 
 
 ##### Run Codex2 in `r`
 ```r
