@@ -2,11 +2,11 @@ Copy number normalization using QDNAseq to chracterize CNR
 
 ### Identify CNV in D and K cell lines; using Fib-BS (D) as an example
 ```
-#change the bamfile name for each sampel accordingly
+#change the bamfile name for each sample accordingly
 #identify copy number variation with QDNAseq. By default it uses the samples from 1000 genome proejct as the control.
 
 #remotes::install_github("asntech/QDNAseq.hg38@main")
-library(QDNAseq.hg38) #yesh, it works, I dont have to build the bin annotation file myself
+library(QDNAseq.hg38) #yesh, it works, I don't have to build the bin annotation file myself
 library(QDNAseq)
 library(tidyverse)
 
