@@ -39,4 +39,4 @@ save.image("Intervals_BSvsWT_log2CNR.Rdata")
 ```
 cat CopywriteR.FibBSvsWT.CNR_segment.table|awk -v OFS='\t' '{print $1,$2,$3,$6}'|sort -k1,1 -k2,2n > CopywriteR.FibBSvsWT.CNR_segment.bed
 ```
-Then perform copy number normalization and differential analysis
+Then perform copy number normalization and differential analysis as https://github.com/Dingersrun/Copy-number-normalization/edit/main/QDNAseq.md#:~:text=CNnormalization_DESeq2_DA_ATACseq
